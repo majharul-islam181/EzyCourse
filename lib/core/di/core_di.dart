@@ -11,11 +11,13 @@ import '../network/dio_client.dart';
 import '../network/network_info.dart';
 import '../storage/local_storage.dart';
 import '../storage/memory_storage.dart';
+import '../theme/theme_manager.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
   await _initStorage();
+  _initTheme();
   _initNetwork();
 }
 
@@ -25,6 +27,10 @@ Future<void> _initStorage() async {
 
   sl.registerSingleton<LocalStorage>(localStorage);
   sl.registerLazySingleton<MemoryStorage>(() => MemoryStorage());
+}
+
+void _initTheme() {
+  sl.registerFactory<ThemeBloc>(() => ThemeBloc(sl<LocalStorage>()));
 }
 
 void _initNetwork() {
