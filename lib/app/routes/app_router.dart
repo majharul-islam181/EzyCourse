@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/pages/login_page.dart';
 import 'app_routes.dart';
 
 class AppRouter {
   AppRouter._();
 
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.home,
+    initialLocation: AppRoutes.login,
     routes: [
+      GoRoute(
+        path: AppRoutes.login,
+        name: AppRouteNames.login,
+        builder: (final BuildContext context, final GoRouterState state) {
+          return const LoginPage();
+        },
+      ),
       GoRoute(
         path: AppRoutes.home,
         name: AppRouteNames.home,
