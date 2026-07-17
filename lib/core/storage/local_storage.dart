@@ -25,9 +25,6 @@ class SharedPreferencesImpl implements LocalStorage {
     // Initialize FlutterSecureStorage with platform-specific options
     // For Android, use EncryptedSharedPreferences
     // For iOS, use Keychain with first unlock accessibility
-    // Note: Ensure you have the necessary permissions and configurations in your AndroidManifest.xml and Info.plist for secure storage.
-    // For Android, you can use the default options, which will use EncryptedSharedPreferences if available.
-    // For iOS, you can specify the accessibility option as needed.
     final secureStorage = FlutterSecureStorage(
       aOptions: const AndroidOptions(encryptedSharedPreferences: true),
       iOptions: IOSOptions(
