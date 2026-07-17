@@ -1,10 +1,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-import '../constants/app_constants.dart';
+import '../../flavors/app_flavor.dart';
 import '../network/api_interceptor.dart';
 import '../network/api_constants.dart';
 import '../network/dio_client.dart';
@@ -40,7 +39,7 @@ void _initNetwork() {
   sl.registerLazySingleton<Dio>(
     () => Dio(
       BaseOptions(
-        baseUrl: AppConstants.apiBaseUrl,
+        baseUrl: AppFlavorConfig.instance.baseUrl,
         connectTimeout: ApiConstants.connectTimeout,
         receiveTimeout: ApiConstants.receiveTimeout,
         headers: const {
@@ -58,7 +57,7 @@ void _initNetwork() {
   final Dio dio = sl<Dio>();
   dio.interceptors.add(sl<ApiInterceptor>());
 
-  if (kDebugMode) {
+  if (AppFlavorConfig.instance.enableLogging) {
     dio.interceptors.add(
       PrettyDioLogger(
         requestHeader: true,
