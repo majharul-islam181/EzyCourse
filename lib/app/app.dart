@@ -9,8 +9,8 @@ import '../core/theme/theme_manager.dart';
 import '../flavors/app_flavor.dart';
 import 'routes/app_router.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class EzyCourseApp extends StatelessWidget {
+  const EzyCourseApp({super.key});
 
   @override
   Widget build(BuildContext context) {
