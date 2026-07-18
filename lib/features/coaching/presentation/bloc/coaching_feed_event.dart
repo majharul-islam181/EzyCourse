@@ -27,3 +27,18 @@ class LoadCoachingFeeds extends CoachingFeedEvent {
 class LoadMoreCoachingFeeds extends CoachingFeedEvent {
   const LoadMoreCoachingFeeds();
 }
+
+class CoachingTrackerTimeChanged extends CoachingFeedEvent {
+  final String inputId;
+  final bool isStart;
+  final String value;
+
+  const CoachingTrackerTimeChanged({
+    required this.inputId,
+    required this.isStart,
+    required this.value,
+  });
+
+  @override
+  List<Object?> get props => [inputId, isStart, value];
+}

@@ -13,6 +13,7 @@ class CoachingFeedBloc extends Bloc<CoachingFeedEvent, CoachingFeedState> {
     : super(const CoachingFeedState()) {
     on<LoadCoachingFeeds>(_loadFeeds);
     on<LoadMoreCoachingFeeds>(_loadNextPage);
+    on<CoachingTrackerTimeChanged>(_changeTrackerTime);
   }
 
   Future<void> _loadFeeds(
@@ -122,5 +123,21 @@ class CoachingFeedBloc extends Bloc<CoachingFeedEvent, CoachingFeedState> {
         clearError: true,
       ),
     );
+  }
+
+  void _changeTrackerTime(
+    final CoachingTrackerTimeChanged event,
+    final Emitter<CoachingFeedState> emit,
+  ) {
+    final Map<String, String> trackerTimeValues = {
+      ...state.trackerTimeValues,
+      _trackerTimeKey(event.inputId, event.isStart): event.value,
+    };
+
+    emit(state.copyWith(trackerTimeValues: trackerTimeValues));
+  }
+
+  String _trackerTimeKey(final String inputId, final bool isStart) {
+    return '$inputId:${isStart ? 'start' : 'end'}';
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import '../../domain/entities/coaching_feed.dart';
@@ -6,6 +7,9 @@ import '../../domain/entities/coaching_feed_type.dart';
 import '../../domain/entities/coaching_program_submission.dart';
 import '../../domain/entities/coaching_task_exercise.dart';
 import '../../domain/entities/coaching_tracker.dart';
+import '../bloc/coaching_feed_bloc.dart';
+import '../bloc/coaching_feed_event.dart';
+import '../bloc/coaching_feed_state.dart';
 import 'feed_card_shared.dart';
 
 class TaskExerciseFeedCard extends StatelessWidget {
@@ -161,12 +165,21 @@ class _DurationTrackerInput extends StatelessWidget {
         children: [
           Expanded(
             child: _TimePickerField(
+              inputId: input.trackerSubitemId,
+              isStart: true,
               label: 'Start',
               initialValue: submission?.durationStart ?? input.startTime,
             ),
           ),
           const SizedBox(width: 8),
-          Expanded(child: _TimePickerField(label: 'End', initialValue: null)),
+          Expanded(
+            child: _TimePickerField(
+              inputId: input.trackerSubitemId,
+              isStart: false,
+              label: 'End',
+              initialValue: null,
+            ),
+          ),
         ],
       ),
     );
@@ -224,53 +237,58 @@ class _SelectOneTrackerInput extends StatelessWidget {
   }
 }
 
-class _TimePickerField extends StatefulWidget {
+class _TimePickerField extends StatelessWidget {
+  final String inputId;
+  final bool isStart;
   final String label;
   final String? initialValue;
 
-  const _TimePickerField({required this.label, this.initialValue});
-
-  @override
-  State<_TimePickerField> createState() => _TimePickerFieldState();
-}
-
-class _TimePickerFieldState extends State<_TimePickerField> {
-  late final TextEditingController _controller;
-  TimeOfDay? _time;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.initialValue ?? '');
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  const _TimePickerField({
+    required this.inputId,
+    required this.isStart,
+    required this.label,
+    this.initialValue,
+  });
 
   @override
   Widget build(final BuildContext context) {
-    return TextFormField(
-      readOnly: true,
-      controller: _controller,
-      onTap: () async {
-        final TimeOfDay? picked = await showTimePicker(
-          context: context,
-          initialTime: _time ?? TimeOfDay.now(),
-        );
-        if (picked != null) {
-          setState(() {
-            _time = picked;
-            _controller.text = picked.format(context);
-          });
-        }
+    return BlocSelector<CoachingFeedBloc, CoachingFeedState, String>(
+      selector: (final CoachingFeedState state) {
+        return state.trackerTimeValues[_trackerTimeKey(inputId, isStart)] ??
+            initialValue ??
+            '';
       },
-      decoration: feedInputDecoration(
-        context,
-        hintText: widget.label,
-      ).copyWith(prefixIcon: const Icon(Icons.timer_outlined)),
+      builder: (final BuildContext context, final String value) {
+        return TextFormField(
+          key: ValueKey<String>('time-$inputId-$isStart-$value'),
+          initialValue: value,
+          readOnly: true,
+          onTap: () => _pickTime(context),
+          decoration: feedInputDecoration(
+            context,
+            hintText: label,
+          ).copyWith(prefixIcon: const Icon(Icons.timer_outlined)),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickTime(final BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked == null || !context.mounted) {
+      return;
+    }
+
+    context.read<CoachingFeedBloc>().add(
+      CoachingTrackerTimeChanged(
+        inputId: inputId,
+        isStart: isStart,
+        value: picked.format(context),
+      ),
     );
   }
 }
@@ -314,4 +332,8 @@ class _LabeledTrackerField extends StatelessWidget {
       ],
     );
   }
+}
+
+String _trackerTimeKey(final String inputId, final bool isStart) {
+  return '$inputId:${isStart ? 'start' : 'end'}';
 }
