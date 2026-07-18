@@ -1,3 +1,5 @@
+import 'package:ezycourse/features/auth/presentation/bloc/login_bloc.dart';
+
 import '../../../core/di/core_di.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/storage/local_storage.dart';
@@ -23,4 +25,5 @@ void initAuthDependencies() {
   sl.registerLazySingleton<LoginUseCase>(
     () => LoginUseCase(sl<AuthRepository>()),
   );
+  sl.registerFactory<LoginBloc>(() => LoginBloc(sl<LoginUseCase>()));
 }
