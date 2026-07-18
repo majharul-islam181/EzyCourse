@@ -117,7 +117,7 @@ class CoachingDetailsBloc
         selectedSession?.parentId ??
         details.currentSession.currentSessionParentId;
 
-    return {if (parentId != null) parentId};
+    return {?parentId};
   }
 
   Set<int> _expandedParentIdsForSelection(
