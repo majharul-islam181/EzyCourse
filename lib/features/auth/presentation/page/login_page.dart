@@ -4,21 +4,38 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/routes/app_routes.dart';
 import '../../../../core/blocs/password_visibility_cubit.dart';
-import '../../../../core/theme/theme_context.dart';
-import '../../../../core/utils/validators.dart';
+import '../../../../core/di/core_di.dart';
 import '../../../../core/widgets/custom_snakbar.dart';
 import '../bloc/login_bloc.dart';
 import '../bloc/login_event.dart';
 import '../bloc/login_state.dart';
+import '../widget/login_form.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  Widget build(final BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<LoginBloc>(create: (_) => sl<LoginBloc>()),
+        BlocProvider<PasswordVisibilityCubit>(
+          create: (_) => sl<PasswordVisibilityCubit>(),
+        ),
+      ],
+      child: const _LoginView(),
+    );
+  }
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginView extends StatefulWidget {
+  const _LoginView();
+
+  @override
+  State<_LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<_LoginView> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -73,176 +90,18 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: colorScheme.surface,
           body: SafeArea(
             child: Center(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(context.spacing.pagePadding),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 420),
-                  child: Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(context.spacing.cardPadding),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              'Login',
-                              style: context.text.titleMedium?.copyWith(
-                                color: colorScheme.onSurface,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: context.spacing.sm),
-                            Text(
-                              'Welcome back to EzyCourse',
-                              style: context.text.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: context.spacing.md),
-                            TextFormField(
-                              controller: _emailController,
-                              enabled: !state.isLoading,
-                              keyboardType: TextInputType.emailAddress,
-                              textInputAction: TextInputAction.next,
-                              autofillHints: const [AutofillHints.email],
-                              validator: AppValidators.email,
-                              decoration: const InputDecoration(
-                                labelText: 'Email',
-                                prefixIcon: Icon(Icons.email_outlined),
-                              ),
-                            ),
-                            SizedBox(height: context.spacing.inputGap),
-                            BlocBuilder<PasswordVisibilityCubit, bool>(
-                              builder:
-                                  (
-                                    final BuildContext context,
-                                    final bool isPasswordVisible,
-                                  ) {
-                                    return TextFormField(
-                                      controller: _passwordController,
-                                      enabled: !state.isLoading,
-                                      obscureText: !isPasswordVisible,
-                                      textInputAction: TextInputAction.done,
-                                      autofillHints: const [
-                                        AutofillHints.password,
-                                      ],
-                                      validator: AppValidators.password,
-                                      onFieldSubmitted: (_) => state.isLoading
-                                          ? null
-                                          : _onLoginPressed(),
-                                      decoration: InputDecoration(
-                                        labelText: 'Password',
-                                        prefixIcon: const Icon(
-                                          Icons.lock_outline,
-                                        ),
-                                        suffixIcon: IconButton(
-                                          onPressed: state.isLoading
-                                              ? null
-                                              : () {
-                                                  context
-                                                      .read<
-                                                        PasswordVisibilityCubit
-                                                      >()
-                                                      .toggle();
-                                                },
-                                          icon: Icon(
-                                            isPasswordVisible
-                                                ? Icons.visibility_off_outlined
-                                                : Icons.visibility_outlined,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                            ),
-                            if (state.isFailure &&
-                                state.errorMessage != null) ...[
-                              SizedBox(height: context.spacing.inputGap),
-                              _LoginErrorMessage(message: state.errorMessage!),
-                            ],
-                            SizedBox(height: context.spacing.md),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: state.isLoading
-                                    ? null
-                                    : _onLoginPressed,
-                                child: AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 180),
-                                  child: state.isLoading
-                                      ? SizedBox(
-                                          key: const ValueKey<String>(
-                                            'loading',
-                                          ),
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: colorScheme.onPrimary,
-                                          ),
-                                        )
-                                      : const Text(
-                                          'Login',
-                                          key: ValueKey<String>('label'),
-                                        ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+              child: LoginForm(
+                formKey: _formKey,
+                emailController: _emailController,
+                passwordController: _passwordController,
+                isLoading: state.isLoading,
+                errorMessage: state.isFailure ? state.errorMessage : null,
+                onLoginPressed: _onLoginPressed,
               ),
             ),
           ),
         );
       },
-    );
-  }
-}
-
-class _LoginErrorMessage extends StatelessWidget {
-  const _LoginErrorMessage({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(final BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colorScheme.errorContainer,
-        borderRadius: context.radius.input,
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(context.spacing.cardPadding),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 18,
-              color: colorScheme.onErrorContainer,
-            ),
-            SizedBox(width: context.spacing.sm),
-            Expanded(
-              child: Text(
-                message,
-                style: context.text.labelSmall?.copyWith(
-                  color: colorScheme.onErrorContainer,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

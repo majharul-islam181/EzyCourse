@@ -38,9 +38,7 @@ Future<void> _initStorage() async {
 }
 
 void _initBlocs() {
-  sl.registerFactory<PasswordVisibilityCubit>(
-    () => PasswordVisibilityCubit(),
-  );
+  sl.registerFactory<PasswordVisibilityCubit>(() => PasswordVisibilityCubit());
 }
 
 void _initTheme() {

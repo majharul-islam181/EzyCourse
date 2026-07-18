@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/page/login_page.dart';
+import '../../features/coaching/presentation/pages/coaching_list_page.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -15,6 +16,13 @@ class AppRouter {
         name: AppRouteNames.login,
         builder: (final BuildContext context, final GoRouterState state) {
           return const LoginPage();
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.coachingList,
+        name: AppRouteNames.coachingList,
+        builder: (final BuildContext context, final GoRouterState state) {
+          return const CoachingListPage();
         },
       ),
       GoRoute(
