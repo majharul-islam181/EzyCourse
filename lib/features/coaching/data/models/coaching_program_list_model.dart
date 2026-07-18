@@ -1,7 +1,51 @@
 import '../../domain/entities/coaching_program.dart';
+import '../../domain/entities/coaching_program_page.dart';
 
-class CoachingProgramListModel extends CoachingProgram {
+class CoachingProgramListModel extends CoachingProgramPage {
   const CoachingProgramListModel({
+    required super.programs,
+    required super.total,
+    required super.perPage,
+    required super.currentPage,
+    required super.lastPage,
+  });
+
+  factory CoachingProgramListModel.fromJson(final Map<String, dynamic> json) {
+    final Map<String, dynamic> meta = json['meta'] as Map<String, dynamic>;
+    final List<dynamic> data = json['data'] as List<dynamic>? ?? [];
+
+    return CoachingProgramListModel(
+      programs: data
+          .map(
+            (final item) =>
+                CoachingProgramItemModel.fromJson(item as Map<String, dynamic>),
+          )
+          .toList(),
+      total: meta['total'] as int? ?? 0,
+      perPage: meta['per_page'] as int? ?? 10,
+      currentPage: meta['current_page'] as int? ?? 1,
+      lastPage: meta['last_page'] as int? ?? 1,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'meta': {
+        'total': total,
+        'per_page': perPage,
+        'current_page': currentPage,
+        'last_page': lastPage,
+      },
+      'data': programs
+          .map((final program) => CoachingProgramItemModel.fromEntity(program))
+          .map((final program) => program.toJson())
+          .toList(),
+    };
+  }
+}
+
+class CoachingProgramItemModel extends CoachingProgram {
+  const CoachingProgramItemModel({
     required super.id,
     required super.title,
     required super.slug,
@@ -17,8 +61,8 @@ class CoachingProgramListModel extends CoachingProgram {
     super.expiryDate,
   });
 
-  factory CoachingProgramListModel.fromJson(final Map<String, dynamic> json) {
-    return CoachingProgramListModel(
+  factory CoachingProgramItemModel.fromJson(final Map<String, dynamic> json) {
+    return CoachingProgramItemModel(
       id: json['id'] as int,
       title: json['title'] as String,
       slug: json['slug'] as String,
@@ -32,6 +76,24 @@ class CoachingProgramListModel extends CoachingProgram {
       enrollmentId: json['enrollment_id'] as int,
       expiredAt: _parseDate(json['expired_at']),
       expiryDate: _parseDate(json['expiry_date']),
+    );
+  }
+
+  factory CoachingProgramItemModel.fromEntity(final CoachingProgram program) {
+    return CoachingProgramItemModel(
+      id: program.id,
+      title: program.title,
+      slug: program.slug,
+      type: program.type,
+      settings: program.settings,
+      thumbnail: program.thumbnail,
+      cover: program.cover,
+      totalMembers: program.totalMembers,
+      status: program.status,
+      coachingProgramId: program.coachingProgramId,
+      enrollmentId: program.enrollmentId,
+      expiredAt: program.expiredAt,
+      expiryDate: program.expiryDate,
     );
   }
 
@@ -51,38 +113,6 @@ class CoachingProgramListModel extends CoachingProgram {
       'expired_at': expiredAt?.toIso8601String(),
       'expiry_date': expiryDate?.toIso8601String(),
     };
-  }
-
-  CoachingProgramListModel copyWith({
-    final int? id,
-    final String? title,
-    final String? slug,
-    final String? type,
-    final String? settings,
-    final String? thumbnail,
-    final String? cover,
-    final int? totalMembers,
-    final String? status,
-    final int? coachingProgramId,
-    final int? enrollmentId,
-    final DateTime? expiredAt,
-    final DateTime? expiryDate,
-  }) {
-    return CoachingProgramListModel(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      slug: slug ?? this.slug,
-      type: type ?? this.type,
-      settings: settings ?? this.settings,
-      thumbnail: thumbnail ?? this.thumbnail,
-      cover: cover ?? this.cover,
-      totalMembers: totalMembers ?? this.totalMembers,
-      status: status ?? this.status,
-      coachingProgramId: coachingProgramId ?? this.coachingProgramId,
-      enrollmentId: enrollmentId ?? this.enrollmentId,
-      expiredAt: expiredAt ?? this.expiredAt,
-      expiryDate: expiryDate ?? this.expiryDate,
-    );
   }
 
   static DateTime? _parseDate(final dynamic value) {
