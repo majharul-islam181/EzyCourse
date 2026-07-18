@@ -248,28 +248,16 @@ lib/features/coaching/coaching.md
 - The default `main.dart` entrypoint runs development for easier local testing. Production builds should use `lib/main_production.dart`.
 - Feature documentation is stored beside the feature so future changes can be understood without reading the full app.
 
-## Screenshots Or Screen Recording
+## Screenshots
 
-Add final app screenshots or a screen recording here before submission.
-
-Recommended files:
-
-```text
-docs/screenshots/login.png
-docs/screenshots/coaching-list.png
-docs/screenshots/coaching-details.png
-docs/screenshots/session-drawer.png
-docs/screenshots/feed-cards.png
-docs/recordings/app-demo.mp4
-```
-
-Preview table:
-
-| Screen | Preview |
+| Login | Coaching Details |
 | --- | --- |
-| Login | `screenshots/login.png` |
-| Coaching List | `screenshots/coaching-list.png` |
-| Coaching Details | `screenshots/coaching-details.png` |
-| Session Drawer | `screenshots/session-drawer.png` |
-| Feed Cards | `screenshots/feed-cards.png` |
+| ![Login screen](screenshots/login.png) | ![Coaching details screen](screenshots/coaching-details.png) |
 
+| Session Drawer | Feed Cards |
+| --- | --- |
+| ![Session drawer](screenshots/drawer.png) | ![Feed cards](screenshots/feed-cards.png) |
+
+| Coach Notes |
+| --- |
+| ![Coach notes bottom sheet](screenshots/notes.png) |
