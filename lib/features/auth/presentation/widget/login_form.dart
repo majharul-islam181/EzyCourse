@@ -10,7 +10,6 @@ class LoginForm extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final bool isLoading;
-  final String? errorMessage;
   final VoidCallback onLoginPressed;
 
   const LoginForm({
@@ -19,7 +18,6 @@ class LoginForm extends StatelessWidget {
     required this.passwordController,
     required this.isLoading,
     required this.onLoginPressed,
-    this.errorMessage,
     super.key,
   });
 
@@ -107,10 +105,6 @@ class LoginForm extends StatelessWidget {
                             );
                           },
                     ),
-                    if (errorMessage != null) ...[
-                      SizedBox(height: context.spacing.inputGap),
-                      _LoginErrorMessage(message: errorMessage!),
-                    ],
                     SizedBox(height: context.spacing.md),
                     SizedBox(
                       width: double.infinity,
@@ -140,46 +134,6 @@ class LoginForm extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _LoginErrorMessage extends StatelessWidget {
-  const _LoginErrorMessage({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(final BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colorScheme.errorContainer,
-        borderRadius: context.radius.input,
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(context.spacing.cardPadding),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 18,
-              color: colorScheme.onErrorContainer,
-            ),
-            SizedBox(width: context.spacing.sm),
-            Expanded(
-              child: Text(
-                message,
-                style: context.text.labelSmall?.copyWith(
-                  color: colorScheme.onErrorContainer,
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );

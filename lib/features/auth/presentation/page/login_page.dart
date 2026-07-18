@@ -95,7 +95,6 @@ class _LoginViewState extends State<_LoginView> {
                 emailController: _emailController,
                 passwordController: _passwordController,
                 isLoading: state.isLoading,
-                errorMessage: state.isFailure ? state.errorMessage : null,
                 onLoginPressed: _onLoginPressed,
               ),
             ),
