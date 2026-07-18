@@ -7,5 +7,6 @@ abstract class CoachingRepository {
   Future<Either<Failure, CoachingProgramPage>> getEnrolledCoachingPrograms({
     required int page,
     required int perPage,
+    String? search,
   });
 }

@@ -2,20 +2,15 @@ import 'package:equatable/equatable.dart';
 
 import '../../domain/entities/coaching_program.dart';
 
-enum LoadStatus {
-  initial,
-  loading,
-  success,
-  loadingMore,
-  failure,
-}
+enum LoadStatus { initial, loading, success, loadingMore, failure }
 
 class CoachingProgramListState extends Equatable {
   final LoadStatus status;
   final List<CoachingProgram> programs;
   final int currentPage;
-  final int limit;     
-  final bool hasNextPage;  
+  final int limit;
+  final bool hasNextPage;
+  final String? search;
   final String? errorMessage;
 
   const CoachingProgramListState({
@@ -24,6 +19,7 @@ class CoachingProgramListState extends Equatable {
     this.currentPage = 1,
     this.limit = 10,
     this.hasNextPage = false,
+    this.search,
     this.errorMessage,
   });
 
@@ -39,8 +35,10 @@ class CoachingProgramListState extends Equatable {
     final int? currentPage,
     final int? limit,
     final bool? hasNextPage,
+    final String? search,
     final String? errorMessage,
     final bool clearError = false,
+    final bool clearSearch = false,
   }) {
     return CoachingProgramListState(
       status: status ?? this.status,
@@ -48,6 +46,7 @@ class CoachingProgramListState extends Equatable {
       currentPage: currentPage ?? this.currentPage,
       limit: limit ?? this.limit,
       hasNextPage: hasNextPage ?? this.hasNextPage,
+      search: clearSearch ? null : search ?? this.search,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
@@ -59,6 +58,7 @@ class CoachingProgramListState extends Equatable {
     currentPage,
     limit,
     hasNextPage,
+    search,
     errorMessage,
   ];
 }

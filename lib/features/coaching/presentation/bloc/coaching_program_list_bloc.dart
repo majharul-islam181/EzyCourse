@@ -28,12 +28,18 @@ class CoachingProgramListBloc
         currentPage: event.page,
         limit: event.limit,
         hasNextPage: false,
+        search: event.search,
         clearError: true,
+        clearSearch: event.search == null || event.search!.trim().isEmpty,
       ),
     );
 
     final result = await _getEnrolledCoachingProgramsUseCase(
-      GetEnrolledCoachingProgramsParams(page: event.page, limit: event.limit),
+      GetEnrolledCoachingProgramsParams(
+        page: event.page,
+        limit: event.limit,
+        search: event.search,
+      ),
     );
 
     result.fold(
@@ -50,17 +56,13 @@ class CoachingProgramListBloc
       return;
     }
 
-    emit(
-      state.copyWith(
-        status: LoadStatus.loadingMore,
-        clearError: true,
-      ),
-    );
+    emit(state.copyWith(status: LoadStatus.loadingMore, clearError: true));
 
     final result = await _getEnrolledCoachingProgramsUseCase(
       GetEnrolledCoachingProgramsParams(
         page: state.currentPage + 1,
         limit: state.limit,
+        search: state.search,
       ),
     );
 
@@ -75,10 +77,7 @@ class CoachingProgramListBloc
     final Emitter<CoachingProgramListState> emit,
   ) {
     emit(
-      state.copyWith(
-        status: LoadStatus.failure,
-        errorMessage: failure.message,
-      ),
+      state.copyWith(status: LoadStatus.failure, errorMessage: failure.message),
     );
   }
 

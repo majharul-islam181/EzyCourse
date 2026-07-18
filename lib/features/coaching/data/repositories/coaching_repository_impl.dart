@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failure.dart';
 import '../../domain/entities/coaching_program_page.dart';
@@ -17,10 +15,15 @@ class CoachingRepositoryImpl implements CoachingRepository {
   Future<Either<Failure, CoachingProgramPage>> getEnrolledCoachingPrograms({
     required final int page,
     required final int perPage,
+    final String? search,
   }) async {
     try {
       final CoachingProgramPage programPage = await _remoteDataSource
-          .getEnrolledCoachingPrograms(page: page, limit: perPage);
+          .getEnrolledCoachingPrograms(
+            page: page,
+            limit: perPage,
+            search: search,
+          );
 
       return Right(programPage);
     } on ValidationException catch (error) {

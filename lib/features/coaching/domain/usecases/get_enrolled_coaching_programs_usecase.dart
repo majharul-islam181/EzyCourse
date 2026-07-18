@@ -19,6 +19,7 @@ class GetEnrolledCoachingProgramsUseCase
     return _repository.getEnrolledCoachingPrograms(
       page: params.page,
       perPage: params.limit,
+      search: params.search,
     );
   }
 }
@@ -26,9 +27,14 @@ class GetEnrolledCoachingProgramsUseCase
 class GetEnrolledCoachingProgramsParams extends Equatable {
   final int page;
   final int limit;
+  final String? search;
 
-  const GetEnrolledCoachingProgramsParams({this.page = 1, this.limit = 10});
+  const GetEnrolledCoachingProgramsParams({
+    this.page = 1,
+    this.limit = 10,
+    this.search,
+  });
 
   @override
-  List<Object?> get props => [page, limit];
+  List<Object?> get props => [page, limit, search];
 }

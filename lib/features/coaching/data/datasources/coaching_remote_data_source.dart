@@ -7,6 +7,7 @@ abstract class CoachingRemoteDataSource {
   Future<CoachingProgramListModel> getEnrolledCoachingPrograms({
     required int page,
     required int limit,
+    String? search,
   });
 }
 
@@ -19,10 +20,15 @@ class CoachingRemoteDataSourceImpl implements CoachingRemoteDataSource {
   Future<CoachingProgramListModel> getEnrolledCoachingPrograms({
     required final int page,
     required final int limit,
+    final String? search,
   }) async {
     final response = await _dioClient.get<Map<String, dynamic>>(
       ApiConstants.getCoachingProgramList,
-      queryParameters: {'page': page, 'limit': limit},
+      queryParameters: {
+        'page': page,
+        'limit': limit,
+        if (search != null && search.trim().isNotEmpty) 'search': search.trim(),
+      },
     );
 
     final Map<String, dynamic>? data = response.data;
