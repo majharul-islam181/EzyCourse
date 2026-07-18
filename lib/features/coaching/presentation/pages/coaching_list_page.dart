@@ -113,9 +113,7 @@ class _CoachingListViewState extends State<_CoachingListView> {
           slivers: [
             SliverAppBar.medium(
               centerTitle: true,
-              title: const Center(
-                child: Text('My Coaching'),
-              ),
+              title: const Center(child: Text('My Coaching')),
               actions: [
                 IconButton(
                   tooltip: 'Logout',
@@ -223,4 +221,3 @@ class _CoachingProgramGridShimmer extends StatelessWidget {
     );
   }
 }
-

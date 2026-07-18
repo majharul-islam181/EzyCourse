@@ -12,6 +12,7 @@ import '../bloc/coaching_feed_event.dart';
 import '../widgets/coaching_details_infographic.dart';
 import '../widgets/coaching_error_view.dart';
 import '../widgets/coaching_feed_list.dart';
+import '../widgets/coaching_notes_bottom_sheet.dart';
 import '../widgets/session_selector_drawer.dart';
 
 class CoachingDetailsPage extends StatelessWidget {
@@ -238,26 +239,9 @@ class _CoachingDetailsScaffoldState extends State<_CoachingDetailsScaffold> {
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
       builder: (final BuildContext context) {
-        final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Notes', style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Text(
-                'Notes access is ready for this coaching program.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        );
+        return const CoachingNotesBottomSheet(notes: []);
       },
     );
   }
