@@ -7,10 +7,12 @@ import 'coaching_program_card.dart';
 class CoachingProgramGrid extends StatelessWidget {
   final List<CoachingProgram> programs;
   final bool isLoadingMore;
+  final ValueChanged<CoachingProgram> onProgramTap;
 
   const CoachingProgramGrid({
     required this.programs,
     required this.isLoadingMore,
+    required this.onProgramTap,
     super.key,
   });
 
@@ -43,7 +45,12 @@ class CoachingProgramGrid extends StatelessWidget {
             return const Center(child: CircularProgressIndicator.adaptive());
           }
 
-          return CoachingProgramCard(program: programs[index]);
+          final CoachingProgram program = programs[index];
+
+          return CoachingProgramCard(
+            program: program,
+            onTap: () => onProgramTap(program),
+          );
         }, childCount: programs.length + 1),
       ),
     );

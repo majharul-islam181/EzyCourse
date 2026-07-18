@@ -5,6 +5,7 @@ import '../../core/blocs/auth_session/auth_session_bloc.dart';
 import '../../core/blocs/auth_session/auth_session_state.dart';
 import '../../core/di/core_di.dart';
 import '../../features/auth/presentation/page/login_page.dart';
+import '../../features/coaching/presentation/pages/coaching_details_page.dart';
 import '../../features/coaching/presentation/pages/coaching_list_page.dart';
 import 'app_routes.dart';
 import 'go_router_refresh_stream.dart';
@@ -46,6 +47,21 @@ class AppRouter {
         name: AppRouteNames.coachingList,
         builder: (final BuildContext context, final GoRouterState state) {
           return const CoachingListPage();
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.coachingDetails,
+        name: AppRouteNames.coachingDetails,
+        builder: (final BuildContext context, final GoRouterState state) {
+          final int? programId = int.tryParse(
+            state.pathParameters['programId'] ?? '',
+          );
+
+          if (programId == null) {
+            return const _RouteNotFoundPage();
+          }
+
+          return CoachingDetailsPage(programId: programId);
         },
       ),
       GoRoute(

@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../app/routes/app_routes.dart';
 import '../../../../core/blocs/auth_session/auth_session_bloc.dart';
 import '../../../../core/blocs/auth_session/auth_session_event.dart';
 import '../../../../core/di/core_di.dart';
+import '../../domain/entities/coaching_program.dart';
 import '../bloc/coaching_program_list_bloc.dart';
 import '../bloc/coaching_program_list_event.dart';
 import '../bloc/coaching_program_list_state.dart';
@@ -174,6 +177,7 @@ class _CoachingListViewState extends State<_CoachingListView> {
                     return CoachingProgramGrid(
                       programs: programs,
                       isLoadingMore: state.isLoadingMore,
+                      onProgramTap: _openCoachingDetails,
                     );
                   },
             ),
@@ -181,5 +185,9 @@ class _CoachingListViewState extends State<_CoachingListView> {
         ),
       ),
     );
+  }
+
+  void _openCoachingDetails(final CoachingProgram program) {
+    context.push(AppRoutes.coachingDetailsPath(program.id));
   }
 }
