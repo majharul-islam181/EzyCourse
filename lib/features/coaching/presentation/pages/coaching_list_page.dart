@@ -113,7 +113,9 @@ class _CoachingListViewState extends State<_CoachingListView> {
           slivers: [
             SliverAppBar.medium(
               centerTitle: true,
-              title: const Text('My Coaching'),
+              title: const Center(
+                child: Text('My Coaching'),
+              ),
               actions: [
                 IconButton(
                   tooltip: 'Logout',

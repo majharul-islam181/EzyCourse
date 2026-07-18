@@ -143,6 +143,7 @@ class CoachingFeedModel extends CoachingFeed {
       case 'lesson':
         return CoachingFeedType.lesson;
       case 'task':
+      case 'task_exercise':
       case 'task/exercise':
       case 'exercise':
         return CoachingFeedType.task;

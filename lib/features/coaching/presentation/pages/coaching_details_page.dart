@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 import '../../../../core/di/core_di.dart';
 import '../../domain/entities/coaching_details_with_sessions.dart';
 import '../../domain/entities/coaching_session.dart';
@@ -107,7 +108,9 @@ class _CoachingDetailsScaffoldState extends State<_CoachingDetailsScaffold> {
     super.initState();
     _scrollController.addListener(_onScroll);
     _selectedSessionId = widget.selectedSessionId;
+    final CoachingSession? selectedSession = widget.details.selectedSession;
     final int? currentParentId =
+        selectedSession?.parentId ??
         widget.details.currentSession.currentSessionParentId;
     _expandedParentIds = {?currentParentId};
     _loadFeedsForSelectedSession();
@@ -163,8 +166,14 @@ class _CoachingDetailsScaffoldState extends State<_CoachingDetailsScaffold> {
             ),
             SliverPadding(
               padding: const EdgeInsets.all(16),
-              sliver: SliverToBoxAdapter(
-                child: CoachingDetailsInfographic(details: widget.details),
+              sliver: SliverList.list(
+                children: [
+                  CoachingDetailsInfographic(details: widget.details),
+                  if (_hasDescription) ...[
+                    const SizedBox(height: 12),
+                    _ProgramDescription(description: _description),
+                  ],
+                ],
               ),
             ),
             const SliverPadding(
@@ -250,6 +259,32 @@ class _CoachingDetailsScaffoldState extends State<_CoachingDetailsScaffold> {
           ),
         );
       },
+    );
+  }
+
+  bool get _hasDescription => _description.isNotEmpty;
+
+  String get _description => widget.details.details.description?.trim() ?? '';
+}
+
+class _ProgramDescription extends StatelessWidget {
+  final String description;
+
+  const _ProgramDescription({required this.description});
+
+  @override
+  Widget build(final BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Html(data: description),
+      ),
     );
   }
 }
