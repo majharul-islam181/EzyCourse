@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import 'coaching_feed_reaction.dart';
 import 'coaching_feed_type.dart';
 import 'coaching_journal.dart';
