@@ -107,10 +107,6 @@ class LoginForm extends StatelessWidget {
                             );
                           },
                     ),
-                    if (errorMessage != null) ...[
-                      SizedBox(height: context.spacing.inputGap),
-                      _LoginErrorMessage(message: errorMessage!),
-                    ],
                     SizedBox(height: context.spacing.md),
                     SizedBox(
                       width: double.infinity,

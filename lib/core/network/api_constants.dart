@@ -1,8 +1,8 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const Duration connectTimeout = Duration(seconds: 15);
-  static const Duration receiveTimeout = Duration(seconds: 15);
+  static const Duration connectTimeout = Duration(seconds: 60);
+  static const Duration receiveTimeout = Duration(seconds: 60);
 
   static const String login = '/student/auth/login';
   static const String getCoachingProgramList = '/student/coaching-programs/getEnrolledCoachingProgramList';

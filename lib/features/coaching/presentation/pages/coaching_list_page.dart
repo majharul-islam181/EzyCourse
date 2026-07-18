@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../../app/routes/app_routes.dart';
 import '../../../../core/blocs/auth_session/auth_session_bloc.dart';
 import '../../../../core/blocs/auth_session/auth_session_event.dart';
@@ -13,6 +14,7 @@ import '../bloc/coaching_program_list_state.dart';
 import '../widgets/coaching_empty_view.dart';
 import '../widgets/coaching_error_view.dart';
 import '../widgets/coaching_program_grid.dart';
+import '../widgets/coaching_program_skeleton_card.dart';
 import '../widgets/coaching_search_bar.dart';
 
 class CoachingListPage extends StatelessWidget {
@@ -137,12 +139,7 @@ class _CoachingListViewState extends State<_CoachingListView> {
                     final CoachingProgramListState state,
                   ) {
                     if (state.isLoading || state.isInitial) {
-                      return const SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Center(
-                          child: CircularProgressIndicator.adaptive(),
-                        ),
-                      );
+                      return const _CoachingProgramGridShimmer();
                     }
 
                     if (state.isFailure && state.programs.isEmpty) {
@@ -191,3 +188,37 @@ class _CoachingListViewState extends State<_CoachingListView> {
     context.push(AppRoutes.coachingDetailsPath(program.id));
   }
 }
+
+class _CoachingProgramGridShimmer extends StatelessWidget {
+  const _CoachingProgramGridShimmer();
+
+  @override
+  Widget build(final BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final Color baseColor = colorScheme.surfaceContainerHighest;
+    final Color highlightColor = colorScheme.surfaceContainerLow;
+
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 250,
+          childAspectRatio: 0.80,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+        ),
+        delegate: SliverChildBuilderDelegate((
+          final BuildContext context,
+          final int index,
+        ) {
+          return Shimmer.fromColors(
+            baseColor: baseColor,
+            highlightColor: highlightColor,
+            child: const CoachingProgramSkeletonCard(),
+          );
+        }, childCount: 6),
+      ),
+    );
+  }
+}
+

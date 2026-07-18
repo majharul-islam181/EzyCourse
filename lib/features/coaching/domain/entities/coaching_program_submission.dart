@@ -10,6 +10,7 @@ class CoachingProgramSubmission extends Equatable {
   final String? answer;
   final String? unit;
   final num? goal;
+  final String? durationStart;
   final String? trackerSubitemId;
   final num? value;
   final DateTime createdAt;
@@ -25,6 +26,7 @@ class CoachingProgramSubmission extends Equatable {
     this.answer,
     this.unit,
     this.goal,
+    this.durationStart,
     this.trackerSubitemId,
     this.value,
     required this.createdAt,
@@ -42,6 +44,7 @@ class CoachingProgramSubmission extends Equatable {
     answer,
     unit,
     goal,
+    durationStart,
     trackerSubitemId,
     value,
     createdAt,

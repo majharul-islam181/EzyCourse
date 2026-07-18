@@ -4,8 +4,10 @@ import '../data/datasources/coaching_remote_data_source.dart';
 import '../data/repositories/coaching_repository_impl.dart';
 import '../domain/repositories/coaching_repository.dart';
 import '../domain/usecases/get_coaching_details_with_sessions_usecase.dart';
+import '../domain/usecases/get_coaching_feeds_usecase.dart';
 import '../domain/usecases/get_enrolled_coaching_programs_usecase.dart';
 import '../presentation/bloc/coaching_details_bloc.dart';
+import '../presentation/bloc/coaching_feed_bloc.dart';
 import '../presentation/bloc/coaching_program_list_bloc.dart';
 
 void initCoachingDependencies() {
@@ -25,11 +27,19 @@ void initCoachingDependencies() {
     () => GetCoachingDetailsWithSessionsUseCase(sl<CoachingRepository>()),
   );
 
+  sl.registerLazySingleton<GetCoachingFeedsUseCase>(
+    () => GetCoachingFeedsUseCase(sl<CoachingRepository>()),
+  );
+
   sl.registerFactory<CoachingProgramListBloc>(
     () => CoachingProgramListBloc(sl<GetEnrolledCoachingProgramsUseCase>()),
   );
 
   sl.registerFactory<CoachingDetailsBloc>(
     () => CoachingDetailsBloc(sl<GetCoachingDetailsWithSessionsUseCase>()),
+  );
+
+  sl.registerFactory<CoachingFeedBloc>(
+    () => CoachingFeedBloc(sl<GetCoachingFeedsUseCase>()),
   );
 }
