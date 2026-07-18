@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../app/routes/app_routes.dart';
 import '../../../../core/di/core_di.dart';
 import '../../domain/entities/coaching_details_with_sessions.dart';
 import '../../domain/entities/coaching_session.dart';
@@ -123,6 +125,11 @@ class _CoachingDetailsScaffoldState extends State<_CoachingDetailsScaffold> {
   @override
   Widget build(final BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Home',
+        onPressed: () => context.go(AppRoutes.coachingList),
+        child: const Icon(Icons.home_outlined),
+      ),
       drawer: Drawer(
         width: MediaQuery.sizeOf(context).width * 0.8,
         child: SessionSelectorDrawer(

@@ -64,43 +64,12 @@ class AppRouter {
           return CoachingDetailsPage(programId: programId);
         },
       ),
-      GoRoute(
-        path: AppRoutes.home,
-        name: AppRouteNames.home,
-        builder: (final BuildContext context, final GoRouterState state) {
-          return const _HomePlaceholderPage();
-        },
-      ),
+
     ],
     errorBuilder: (final BuildContext context, final GoRouterState state) {
       return const _RouteNotFoundPage();
     },
   );
-}
-
-class _HomePlaceholderPage extends StatelessWidget {
-  const _HomePlaceholderPage();
-
-  @override
-  Widget build(final BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('EzyCourse')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Center(
-          child: Text(
-            'Home route is ready.',
-            style: textTheme.titleMedium?.copyWith(
-              color: colorScheme.onSurface,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _RouteNotFoundPage extends StatelessWidget {
