@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failure.dart';
 import '../../domain/entities/coaching_details_with_sessions.dart';
+import '../../domain/entities/coaching_feed_page.dart';
 import '../../domain/entities/coaching_program_page.dart';
 import '../../domain/repositories/coaching_repository.dart';
 import '../datasources/coaching_remote_data_source.dart';
@@ -35,8 +36,7 @@ class CoachingRepositoryImpl implements CoachingRepository {
   }
 
   @override
-  Future<Either<Failure, CoachingDetailsWithSessions>>
-  getCoachingDetailsWithSessions({
+  Future<Either<Failure, CoachingDetailsWithSessions>> getCoachingDetailsWithSessions({
     required final int programId,
     required final String userZone,
   }) async {
@@ -48,6 +48,28 @@ class CoachingRepositoryImpl implements CoachingRepository {
           );
 
       return Right(details);
+    } catch (error) {
+      return Left(_mapExceptionToFailure(error));
+    }
+  }
+
+  @override
+  Future<Either<Failure, CoachingFeedPage>> getCoachingFeeds({
+    required final int programId,
+    required final int sessionId,
+    required final int page,
+    required final int limit,
+  }) async {
+    try {
+      final CoachingFeedPage feedPage = await _remoteDataSource
+          .getCoachingFeeds(
+            programId: programId,
+            sessionId: sessionId,
+            page: page,
+            limit: limit,
+          );
+
+      return Right(feedPage);
     } catch (error) {
       return Left(_mapExceptionToFailure(error));
     }
