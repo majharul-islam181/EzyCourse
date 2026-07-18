@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/page/login_page.dart';
 import 'app_routes.dart';
 
 class AppRouter {

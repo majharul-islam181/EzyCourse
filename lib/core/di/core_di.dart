@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../flavors/app_flavor.dart';
+import '../blocs/password_visibility_cubit.dart';
 import '../network/api_interceptor.dart';
 import '../network/api_constants.dart';
 import '../network/dio_client.dart';
@@ -17,6 +18,7 @@ final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
   await _initStorage();
+  _initBlocs();
   _initTheme();
   _initNetwork();
 }
@@ -33,6 +35,12 @@ Future<void> _initStorage() async {
 
   sl.registerSingleton<LocalStorage>(localStorage);
   sl.registerSingleton<MemoryStorage>(memoryStorage);
+}
+
+void _initBlocs() {
+  sl.registerFactory<PasswordVisibilityCubit>(
+    () => PasswordVisibilityCubit(),
+  );
 }
 
 void _initTheme() {
