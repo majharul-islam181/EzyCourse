@@ -10,6 +10,7 @@ import '../network/dio_client.dart';
 import '../network/network_info.dart';
 import '../storage/local_storage.dart';
 import '../storage/memory_storage.dart';
+import '../storage/storage_keys.dart';
 import '../theme/theme_manager.dart';
 
 final sl = GetIt.instance;
@@ -23,9 +24,15 @@ Future<void> initDependencies() async {
 Future<void> _initStorage() async {
   final SharedPreferencesImpl localStorage =
       await SharedPreferencesImpl.create();
+  final MemoryStorage memoryStorage = MemoryStorage();
+  final String? accessToken = await localStorage.getSecureData(
+    StorageKeys.authToken,
+  );
+
+  memoryStorage.setAccessToken(accessToken);
 
   sl.registerSingleton<LocalStorage>(localStorage);
-  sl.registerLazySingleton<MemoryStorage>(() => MemoryStorage());
+  sl.registerSingleton<MemoryStorage>(memoryStorage);
 }
 
 void _initTheme() {

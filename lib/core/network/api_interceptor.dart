@@ -15,9 +15,12 @@ class ApiInterceptor extends Interceptor {
     final RequestOptions options,
     final RequestInterceptorHandler handler,
   ) {
+    final bool noAuthentication = options.headers['No-Authentication'] == true;
+    options.headers.remove('No-Authentication');
+
     // Add the access token from memory storage to the request headers.
     final String? token = _memoryStorage.accessToken;
-    if (token != null && token.isNotEmpty) {
+    if (!noAuthentication && token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
     }
     options.headers['Accept'] = 'application/json';
@@ -31,7 +34,7 @@ class ApiInterceptor extends Interceptor {
   ) async {
     if (err.response?.statusCode == 401) {
       final String? refreshToken = await _localStorage.getSecureData(
-        StorageKeys.refreshToken
+        StorageKeys.refreshToken,
       );
       if (refreshToken != null && refreshToken.isNotEmpty) {
         try {
@@ -47,11 +50,14 @@ class ApiInterceptor extends Interceptor {
             final String newToken = response.data!['token'] as String;
             final String newRefreshToken =
                 response.data!['refreshToken'] as String;
-            
+
             // Update the access token in memory
             _memoryStorage.setAccessToken(newToken);
             // Update the refresh token in secure storage
-            await _localStorage.saveSecureData(StorageKeys.refreshToken, newRefreshToken);
+            await _localStorage.saveSecureData(
+              StorageKeys.refreshToken,
+              newRefreshToken,
+            );
 
             final RequestOptions requestOptions = err.requestOptions;
             requestOptions.headers['Authorization'] = 'Bearer $newToken';
