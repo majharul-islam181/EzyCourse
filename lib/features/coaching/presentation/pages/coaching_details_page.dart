@@ -214,6 +214,7 @@ class _CoachingDetailsScaffoldState extends State<_CoachingDetailsScaffold> {
   void _selectSession(final CoachingSession session) {
     setState(() => _selectedSessionId = session.id);
     _loadFeedsForSelectedSession();
+    Navigator.of(context).pop();
   }
 
   void _loadFeedsForSelectedSession() {
