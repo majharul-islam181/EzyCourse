@@ -2,6 +2,7 @@ import '../../../../core/errors/exceptions.dart';
 import '../../../../core/network/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/coaching_details_with_sessions_model.dart';
+import '../models/coaching_feed_page_model.dart';
 import '../models/coaching_program_list_model.dart';
 
 abstract class CoachingRemoteDataSource {
@@ -14,6 +15,13 @@ abstract class CoachingRemoteDataSource {
   Future<CoachingDetailsWithSessionsModel> getCoachingDetailsWithSessions({
     required int programId,
     required String userZone,
+  });
+
+  Future<CoachingFeedPageModel> getCoachingFeeds({
+    required int programId,
+    required int sessionId,
+    required int page,
+    required int limit,
   });
 }
 
@@ -65,5 +73,30 @@ class CoachingRemoteDataSourceImpl implements CoachingRemoteDataSource {
     }
 
     return CoachingDetailsWithSessionsModel.fromJson(data);
+  }
+
+  @override
+  Future<CoachingFeedPageModel> getCoachingFeeds({
+    required final int programId,
+    required final int sessionId,
+    required final int page,
+    required final int limit,
+  }) async {
+    final response = await _dioClient.get<Map<String, dynamic>>(
+      ApiConstants.getCoachingFeedList(programId, sessionId),
+      queryParameters: {
+        'program_id': programId,
+        'session_id': sessionId,
+        'page': page,
+        'limit': limit,
+      },
+    );
+
+    final Map<String, dynamic>? data = response.data;
+    if (data == null) {
+      throw const ServerException(message: 'Coaching feed response was empty.');
+    }
+
+    return CoachingFeedPageModel.fromJson(data);
   }
 }
