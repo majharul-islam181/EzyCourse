@@ -1,10 +1,7 @@
 import '../../domain/entities/auth_session.dart';
 
 class AuthSessionModel extends AuthSession {
-  const AuthSessionModel({
-    required super.type, 
-    required super.token,
-    });
+  const AuthSessionModel({required super.type, required super.token});
 
   factory AuthSessionModel.fromJson(final Map<String, dynamic> json) {
     return AuthSessionModel(

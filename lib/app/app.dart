@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../core/blocs/auth_session/auth_session_bloc.dart';
+import '../core/blocs/auth_session/auth_session_event.dart';
 import '../core/di/core_di.dart';
 import '../core/theme/app_theme.dart';
 import '../core/theme/theme_manager.dart';
@@ -12,8 +14,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ThemeBloc>(
-      create: (_) => sl<ThemeBloc>()..add(LoadTheme()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthSessionBloc>.value(
+          value: sl<AuthSessionBloc>()..add(const AuthSessionStarted()),
+        ),
+        BlocProvider<ThemeBloc>(
+          create: (_) => sl<ThemeBloc>()..add(LoadTheme()),
+        ),
+      ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (BuildContext context, ThemeState state) {
           return MaterialApp.router(

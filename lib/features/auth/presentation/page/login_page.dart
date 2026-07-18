@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../../app/routes/app_routes.dart';
-import '../../../../core/blocs/password_visibility_cubit.dart';
+import '../../../../core/blocs/auth_session/auth_session_bloc.dart';
+import '../../../../core/blocs/auth_session/auth_session_event.dart';
+import '../../../../core/blocs/password_visibility_cubit/password_visibility_cubit.dart';
 import '../../../../core/di/core_di.dart';
 import '../../../../core/widgets/custom_snakbar.dart';
 import '../bloc/login_bloc.dart';
@@ -69,12 +69,18 @@ class _LoginViewState extends State<_LoginView> {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (final BuildContext context, final LoginState state) {
         if (state.isSuccess) {
+          final session = state.session;
+          if (session != null) {
+            context.read<AuthSessionBloc>().add(
+              AuthSessionAuthenticated(session.token),
+            );
+          }
+
           CustomSnackBar.show(
             context: context,
             message: 'Login successful.',
             type: SnackBarType.success,
           );
-          context.goNamed(AppRouteNames.coachingList);
         }
 
         if (state.isFailure && state.errorMessage != null) {
@@ -95,6 +101,7 @@ class _LoginViewState extends State<_LoginView> {
                 emailController: _emailController,
                 passwordController: _passwordController,
                 isLoading: state.isLoading,
+                errorMessage: state.isFailure ? state.errorMessage : null,
                 onLoginPressed: _onLoginPressed,
               ),
             ),

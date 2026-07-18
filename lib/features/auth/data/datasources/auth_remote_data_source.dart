@@ -29,7 +29,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       data: {
         'email': email,
         'password': password,
-        if (appFcmToken != null && appFcmToken.isNotEmpty) 'app_fcm_token': appFcmToken,
+        if (appFcmToken != null && appFcmToken.isNotEmpty)
+          'app_fcm_token': appFcmToken,
       },
       options: Options(headers: {'No-Authentication': 'true'}),
     );

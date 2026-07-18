@@ -4,23 +4,14 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failure.dart';
-import '../../../../core/storage/local_storage.dart';
-import '../../../../core/storage/memory_storage.dart';
-import '../../../../core/storage/storage_keys.dart';
 import '../../domain/entities/auth_session.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
-  final LocalStorage _localStorage;
-  final MemoryStorage _memoryStorage;
 
-  const AuthRepositoryImpl(
-    this._remoteDataSource,
-    this._localStorage,
-    this._memoryStorage,
-  );
+  const AuthRepositoryImpl(this._remoteDataSource);
 
   @override
   Future<Either<Failure, AuthSession>> login({
@@ -34,9 +25,6 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
         appFcmToken: appFcmToken,
       );
-
-      _memoryStorage.setAccessToken(session.token);
-      await _localStorage.saveSecureData(StorageKeys.authToken, session.token);
 
       return Right(session);
     } on ValidationException catch (error) {

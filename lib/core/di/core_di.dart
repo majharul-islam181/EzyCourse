@@ -4,7 +4,8 @@ import 'package:get_it/get_it.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../flavors/app_flavor.dart';
-import '../blocs/password_visibility_cubit.dart';
+import '../blocs/auth_session/auth_session_bloc.dart';
+import '../blocs/password_visibility_cubit/password_visibility_cubit.dart';
 import '../network/api_interceptor.dart';
 import '../network/api_constants.dart';
 import '../network/dio_client.dart';
@@ -38,6 +39,9 @@ Future<void> _initStorage() async {
 }
 
 void _initBlocs() {
+  sl.registerLazySingleton<AuthSessionBloc>(
+    () => AuthSessionBloc(sl<LocalStorage>(), sl<MemoryStorage>()),
+  );
   sl.registerFactory<PasswordVisibilityCubit>(() => PasswordVisibilityCubit());
 }
 
