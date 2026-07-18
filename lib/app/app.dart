@@ -18,10 +18,25 @@ class MyApp extends StatelessWidget {
         builder: (BuildContext context, ThemeState state) {
           return MaterialApp.router(
             title: AppFlavorConfig.instance.appName,
+            debugShowCheckedModeBanner: false,
             theme: AppTheme.light,
             darkTheme: AppTheme.dark,
             themeMode: state.themeMode,
             routerConfig: AppRouter.router,
+            builder: (final BuildContext context, final Widget? child) {
+              final Widget appChild = child ?? const SizedBox.shrink();
+
+              if (AppFlavorConfig.isDev) {
+                return Banner(
+                  message: 'DEV',
+                  location: BannerLocation.topStart,
+                  color: Colors.green,
+                  child: appChild,
+                );
+              }
+
+              return appChild;
+            },
           );
         },
       ),
