@@ -7,6 +7,7 @@ import '../../../../app/routes/app_routes.dart';
 import '../../../../core/blocs/auth_session/auth_session_bloc.dart';
 import '../../../../core/blocs/auth_session/auth_session_event.dart';
 import '../../../../core/di/core_di.dart';
+import '../../../../core/theme/theme_manager.dart';
 import '../../domain/entities/coaching_program.dart';
 import '../bloc/coaching_program_list_bloc.dart';
 import '../bloc/coaching_program_list_event.dart';
@@ -111,18 +112,42 @@ class _CoachingListViewState extends State<_CoachingListView> {
           controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            SliverAppBar.medium(
+            SliverAppBar(
+              pinned: true,
               centerTitle: true,
-              title: const Center(child: Text('My Coaching')),
+              leadingWidth: 56,
+              leading: BlocBuilder<ThemeBloc, ThemeState>(
+                builder: (final BuildContext context, final ThemeState state) {
+                  final bool isDark = state.themeMode == ThemeMode.dark;
+
+                  return IconButton(
+                    tooltip: isDark ? 'Light theme' : 'Dark theme',
+                    onPressed: () {
+                      context.read<ThemeBloc>().add(
+                        ThemeChanged(isDark ? ThemeMode.light : ThemeMode.dark),
+                      );
+                    },
+                    icon: Icon(
+                      isDark
+                          ? Icons.light_mode_outlined
+                          : Icons.dark_mode_outlined,
+                    ),
+                  );
+                },
+              ),
+              title: const Text('My Coaching'),
               actions: [
-                IconButton(
-                  tooltip: 'Logout',
-                  onPressed: () {
-                    context.read<AuthSessionBloc>().add(
-                      const AuthSessionLogoutRequested(),
-                    );
-                  },
-                  icon: const Icon(Icons.logout),
+                SizedBox(
+                  width: 56,
+                  child: IconButton(
+                    tooltip: 'Logout',
+                    onPressed: () {
+                      context.read<AuthSessionBloc>().add(
+                        const AuthSessionLogoutRequested(),
+                      );
+                    },
+                    icon: const Icon(Icons.logout),
+                  ),
                 ),
               ],
             ),
