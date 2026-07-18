@@ -14,6 +14,7 @@ class CoachingFeedBloc extends Bloc<CoachingFeedEvent, CoachingFeedState> {
     on<LoadCoachingFeeds>(_loadFeeds);
     on<LoadMoreCoachingFeeds>(_loadNextPage);
     on<CoachingTrackerTimeChanged>(_changeTrackerTime);
+    on<CoachingJournalDraftChanged>(_changeJournalDraft);
   }
 
   Future<void> _loadFeeds(
@@ -135,6 +136,18 @@ class CoachingFeedBloc extends Bloc<CoachingFeedEvent, CoachingFeedState> {
     };
 
     emit(state.copyWith(trackerTimeValues: trackerTimeValues));
+  }
+
+  void _changeJournalDraft(
+    final CoachingJournalDraftChanged event,
+    final Emitter<CoachingFeedState> emit,
+  ) {
+    final Map<int, String> journalDrafts = {
+      ...state.journalDrafts,
+      event.feedId: event.value,
+    };
+
+    emit(state.copyWith(journalDrafts: journalDrafts));
   }
 
   String _trackerTimeKey(final String inputId, final bool isStart) {

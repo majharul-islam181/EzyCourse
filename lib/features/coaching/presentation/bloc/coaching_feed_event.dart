@@ -42,3 +42,16 @@ class CoachingTrackerTimeChanged extends CoachingFeedEvent {
   @override
   List<Object?> get props => [inputId, isStart, value];
 }
+
+class CoachingJournalDraftChanged extends CoachingFeedEvent {
+  final int feedId;
+  final String value;
+
+  const CoachingJournalDraftChanged({
+    required this.feedId,
+    required this.value,
+  });
+
+  @override
+  List<Object?> get props => [feedId, value];
+}

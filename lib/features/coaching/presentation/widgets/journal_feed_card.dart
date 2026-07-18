@@ -1,51 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 import '../../domain/entities/coaching_feed.dart';
 import '../../domain/entities/coaching_journal.dart';
 import '../../domain/entities/coaching_program_submission.dart';
+import '../bloc/coaching_feed_bloc.dart';
+import '../bloc/coaching_feed_event.dart';
+import '../bloc/coaching_feed_state.dart';
 import 'feed_card_shared.dart';
 
-class JournalFeedCard extends StatefulWidget {
+class JournalFeedCard extends StatelessWidget {
   final CoachingFeed feed;
 
   const JournalFeedCard({required this.feed, super.key});
 
   @override
-  State<JournalFeedCard> createState() => _JournalFeedCardState();
-}
-
-class _JournalFeedCardState extends State<JournalFeedCard> {
-  late final TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: _journalAnswer);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  String get _journalAnswer {
-    for (final CoachingProgramSubmission submission
-        in widget.feed.submissions) {
-      if (submission.answer != null) {
-        return submission.answer!;
-      }
-    }
-    return '';
-  }
-
-  @override
   Widget build(final BuildContext context) {
-    final CoachingJournal? journal = widget.feed.journal;
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final CoachingJournal? journal = feed.journal;
     final int characterLimit = journal?.characterLimit ?? 2000;
-    final bool isUpdate = widget.feed.hasSubmission;
+    final bool isUpdate = feed.hasSubmission;
+    final String initialAnswer = _journalAnswer;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,11 +36,15 @@ class _JournalFeedCardState extends State<JournalFeedCard> {
         ],
         const SizedBox(height: 12),
         TextFormField(
-          controller: _controller,
+          initialValue: initialAnswer,
           minLines: 2,
           maxLines: 5,
           maxLength: characterLimit,
-          onChanged: (_) => setState(() {}),
+          onChanged: (final String value) {
+            context.read<CoachingFeedBloc>().add(
+              CoachingJournalDraftChanged(feedId: feed.id, value: value),
+            );
+          },
           decoration: feedInputDecoration(
             context,
             hintText: 'Write your journal entry',
@@ -73,11 +52,20 @@ class _JournalFeedCardState extends State<JournalFeedCard> {
         ),
         Align(
           alignment: Alignment.centerRight,
-          child: Text(
-            '${_controller.text.length}/$characterLimit',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
+          child: BlocSelector<CoachingFeedBloc, CoachingFeedState, int>(
+            selector: (final CoachingFeedState state) {
+              return (state.journalDrafts[feed.id] ?? initialAnswer).length;
+            },
+            builder: (final BuildContext context, final int characterCount) {
+              final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+              return Text(
+                '$characterCount/$characterLimit',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              );
+            },
           ),
         ),
         const SizedBox(height: 12),
@@ -89,8 +77,17 @@ class _JournalFeedCardState extends State<JournalFeedCard> {
           ),
         ),
         const SizedBox(height: 12),
-        FeedCommentButton(commentCount: widget.feed.commentCount),
+        FeedCommentButton(commentCount: feed.commentCount),
       ],
     );
+  }
+
+  String get _journalAnswer {
+    for (final CoachingProgramSubmission submission in feed.submissions) {
+      if (submission.answer != null) {
+        return submission.answer!;
+      }
+    }
+    return '';
   }
 }

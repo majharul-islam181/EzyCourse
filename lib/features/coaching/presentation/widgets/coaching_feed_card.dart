@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../domain/entities/coaching_feed.dart';
 import '../../domain/entities/coaching_feed_type.dart';
 import 'journal_feed_card.dart';

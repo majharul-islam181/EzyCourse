@@ -12,6 +12,7 @@ class CoachingFeedState extends Equatable {
   final int limit;
   final bool hasNextPage;
   final Map<String, String> trackerTimeValues;
+  final Map<int, String> journalDrafts;
   final String? errorMessage;
 
   const CoachingFeedState({
@@ -23,6 +24,7 @@ class CoachingFeedState extends Equatable {
     this.limit = 10,
     this.hasNextPage = false,
     this.trackerTimeValues = const {},
+    this.journalDrafts = const {},
     this.errorMessage,
   });
 
@@ -41,6 +43,7 @@ class CoachingFeedState extends Equatable {
     final int? limit,
     final bool? hasNextPage,
     final Map<String, String>? trackerTimeValues,
+    final Map<int, String>? journalDrafts,
     final String? errorMessage,
     final bool clearError = false,
   }) {
@@ -53,6 +56,7 @@ class CoachingFeedState extends Equatable {
       limit: limit ?? this.limit,
       hasNextPage: hasNextPage ?? this.hasNextPage,
       trackerTimeValues: trackerTimeValues ?? this.trackerTimeValues,
+      journalDrafts: journalDrafts ?? this.journalDrafts,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
@@ -67,6 +71,7 @@ class CoachingFeedState extends Equatable {
     limit,
     hasNextPage,
     trackerTimeValues,
+    journalDrafts,
     errorMessage,
   ];
 }
