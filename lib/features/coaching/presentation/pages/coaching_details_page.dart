@@ -69,7 +69,8 @@ class _CoachingDetailsView extends StatelessWidget {
 
         return _CoachingDetailsScaffold(
           details: state.detailsWithSessions!,
-          selectedSessionId: state.selectedSession?.id,
+          selectedSession: state.selectedSession,
+          expandedParentIds: state.expandedParentIds,
           onRefresh: () => _reload(context),
         );
       },
@@ -85,12 +86,14 @@ class _CoachingDetailsView extends StatelessWidget {
 
 class _CoachingDetailsScaffold extends StatefulWidget {
   final CoachingDetailsWithSessions details;
-  final int? selectedSessionId;
+  final CoachingSession? selectedSession;
+  final Set<int> expandedParentIds;
   final Future<void> Function() onRefresh;
 
   const _CoachingDetailsScaffold({
     required this.details,
-    required this.selectedSessionId,
+    required this.selectedSession,
+    required this.expandedParentIds,
     required this.onRefresh,
   });
 
@@ -101,19 +104,11 @@ class _CoachingDetailsScaffold extends StatefulWidget {
 
 class _CoachingDetailsScaffoldState extends State<_CoachingDetailsScaffold> {
   final ScrollController _scrollController = ScrollController();
-  late final Set<int> _expandedParentIds;
-  late int? _selectedSessionId;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _selectedSessionId = widget.selectedSessionId;
-    final CoachingSession? selectedSession = widget.details.selectedSession;
-    final int? currentParentId =
-        selectedSession?.parentId ??
-        widget.details.currentSession.currentSessionParentId;
-    _expandedParentIds = {?currentParentId};
     _loadFeedsForSelectedSession();
   }
 
@@ -132,8 +127,8 @@ class _CoachingDetailsScaffoldState extends State<_CoachingDetailsScaffold> {
         width: MediaQuery.sizeOf(context).width * 0.8,
         child: SessionSelectorDrawer(
           details: widget.details,
-          expandedParentIds: _expandedParentIds,
-          selectedSessionId: _selectedSessionId,
+          expandedParentIds: widget.expandedParentIds,
+          selectedSessionId: widget.selectedSession?.id,
           onToggleParent: _toggleParent,
           onSelectSession: _selectSession,
         ),
@@ -201,32 +196,33 @@ class _CoachingDetailsScaffoldState extends State<_CoachingDetailsScaffold> {
   }
 
   void _toggleParent(final int parentId) {
-    setState(() {
-      if (_expandedParentIds.contains(parentId)) {
-        _expandedParentIds.remove(parentId);
-        return;
-      }
-
-      _expandedParentIds.add(parentId);
-    });
+    context.read<CoachingDetailsBloc>().add(
+      CoachingParentSessionToggled(parentId),
+    );
   }
 
   void _selectSession(final CoachingSession session) {
-    setState(() => _selectedSessionId = session.id);
-    _loadFeedsForSelectedSession();
+    context.read<CoachingDetailsBloc>().add(
+      CoachingSessionSelected(session.id),
+    );
+    _loadFeedsForSession(session.id);
     Navigator.of(context).pop();
   }
 
   void _loadFeedsForSelectedSession() {
-    final int? selectedSessionId = _selectedSessionId;
+    final int? selectedSessionId = widget.selectedSession?.id;
     if (selectedSessionId == null) {
       return;
     }
 
+    _loadFeedsForSession(selectedSessionId);
+  }
+
+  void _loadFeedsForSession(final int sessionId) {
     context.read<CoachingFeedBloc>().add(
       LoadCoachingFeeds(
         programId: widget.details.details.id,
-        sessionId: selectedSessionId,
+        sessionId: sessionId,
       ),
     );
   }

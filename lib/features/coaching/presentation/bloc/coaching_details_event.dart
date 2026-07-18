@@ -16,3 +16,21 @@ class LoadCoachingDetails extends CoachingDetailsEvent {
   @override
   List<Object?> get props => [programId, userZone];
 }
+
+class CoachingSessionSelected extends CoachingDetailsEvent {
+  final int sessionId;
+
+  const CoachingSessionSelected(this.sessionId);
+
+  @override
+  List<Object?> get props => [sessionId];
+}
+
+class CoachingParentSessionToggled extends CoachingDetailsEvent {
+  final int parentId;
+
+  const CoachingParentSessionToggled(this.parentId);
+
+  @override
+  List<Object?> get props => [parentId];
+}

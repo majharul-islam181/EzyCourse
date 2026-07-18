@@ -9,12 +9,14 @@ class CoachingDetailsState extends Equatable {
   final CoachingDetailsStatus status;
   final CoachingDetailsWithSessions? detailsWithSessions;
   final CoachingSession? selectedSession;
+  final Set<int> expandedParentIds;
   final String? errorMessage;
 
   const CoachingDetailsState({
     this.status = CoachingDetailsStatus.initial,
     this.detailsWithSessions,
     this.selectedSession,
+    this.expandedParentIds = const {},
     this.errorMessage,
   });
 
@@ -27,6 +29,7 @@ class CoachingDetailsState extends Equatable {
     final CoachingDetailsStatus? status,
     final CoachingDetailsWithSessions? detailsWithSessions,
     final CoachingSession? selectedSession,
+    final Set<int>? expandedParentIds,
     final String? errorMessage,
     final bool clearError = false,
   }) {
@@ -34,6 +37,7 @@ class CoachingDetailsState extends Equatable {
       status: status ?? this.status,
       detailsWithSessions: detailsWithSessions ?? this.detailsWithSessions,
       selectedSession: selectedSession ?? this.selectedSession,
+      expandedParentIds: expandedParentIds ?? this.expandedParentIds,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
@@ -43,6 +47,7 @@ class CoachingDetailsState extends Equatable {
     status,
     detailsWithSessions,
     selectedSession,
+    expandedParentIds,
     errorMessage,
   ];
 }
